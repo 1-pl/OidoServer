@@ -297,9 +297,10 @@ sub message()
 		}
 		$root->appendChild($response);
 		print $doc->toString();
-		
+		if(defined $dbh)
+		{
 		$dbh->disconnect();
-		
+		}
 	}
 	elsif($type eq "xmle")
 	{

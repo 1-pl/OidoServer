@@ -1,4 +1,4 @@
-#!C:/Perl64/bin/perl.exe
+#!C:/Strawberry/Perl/bin/perl.exe
 
 #use IPC::System::Simple qw(system capture);
 
