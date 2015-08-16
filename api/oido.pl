@@ -130,11 +130,11 @@ sub message()
 		{
 			logAppend2 $ENV{$key}, $key	;
 		}
-		if(scalar @rest != 0 )
+		if($query ne "path" and scalar @rest != 0 )
 		{
 			$status->setAttribute("status","0");
 			
-			$status->addText("Not implemented yet");
+			$status->addText("$query Not implemented yet");
 			
 			$response->appendChild($status);
 			
@@ -146,7 +146,60 @@ sub message()
 		require 'oido_db.pl';
 		#require 'example.pl';
 		$dbh = prepareDB("localhost","oido_pl","root","");
-		
+	
+		if($method eq "GET" and $query eq "path")
+		{
+			$status->setAttribute("status","0");
+			
+			$status->addText("OK");
+
+			if($restrest ne "")
+			{
+				$oid = $restrest;
+				$sql = "CALL listPath('" . $oid . "')" ;
+				#$status->addText("$query <$sql><$str> Not fully implemented yet");
+				$sth = $dbh->prepare($sql);
+				$out = $sth->execute();
+				if($sth->err)
+				{
+					$status->setAttribute("status","2");
+					
+					$status->addText("$query <$str->errmsg> ");
+				}
+				else
+				{
+					do
+					{
+						$result = $sth->fetchrow_arrayref();
+						if($result)
+						{
+							if($str ne "")
+							{
+								$str .= '.';
+							}
+							$str .= $result->[1] ;
+						}
+					}
+					while($result);
+					$data = $doc->createElement("$query") ;
+					$data->setAttribute("oid",$oid);
+					$data->addText($str);
+					$response->appendChild($data);
+				}
+			}
+			$dbh->disconnect();
+			
+			$response->appendChild($status);
+			
+			$response->appendChild($logNode) ;
+			$root->appendChild($response);
+			print $doc->toString();
+			return 0;
+		}
+		else
+		{
+			print "query=$query \n";
+		}
 		if($method eq "POST")
 		{
 			$reqRoot = $request->getDocumentElement();
