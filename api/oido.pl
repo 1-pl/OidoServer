@@ -198,7 +198,7 @@ sub message()
 		}
 		else
 		{
-			print "query=$query \n";
+			#print "query=$query \n";
 		}
 		if($method eq "POST")
 		{
